@@ -44,6 +44,9 @@
             },
             neighboringMines() {
                 return this.cellReactive.neighboringMines;
+            },
+            objectId() {
+                return this.cellReactive.id;
             }
         },
 
@@ -51,6 +54,11 @@
             gameStarted(val){
                 if(val){
                     this.explosionTriggered = false;
+                }
+            },
+            id(val) {
+                if(val !== this.objectId){
+                    this.cellReactive = this.cellObject;
                 }
             }
         },

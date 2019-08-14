@@ -8,6 +8,7 @@
                         :game-over="gameOver"
                         :game-started="gameStarted"
                         :remaining-cells="remainingCells"
+                        @change-size="sizeChange"
                         @reset-grid="resetGrid"
                     />
                 </th>
@@ -73,7 +74,7 @@
             },
 
             numOfMines() {
-                // 15% of the grid will be mines
+                // 18% of the grid will be mines
                 return Math.round(this.numOfCells * .18);
             },
 
@@ -170,6 +171,7 @@
                     //Check if cell exists
                     if( !this.cells.hasOwnProperty(id) ) {
                         this.cells[id] = {
+                            id: id,
                             isOpen: false,
                             neighboringMines: 0,
                             hasMine: false,
@@ -188,6 +190,12 @@
                 this.remainingCells = this.numOfCellsWoMines;
                 //Resets the number of flags the user can set
                 this.remainingFlags = this.numOfMines;
+            },
+
+            sizeChange(r, c){
+                this.rows = r;
+                this.columns = c;
+                this.resetGrid();
             },
 
             plantMines(clickedCell) {
