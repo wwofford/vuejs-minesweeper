@@ -77,7 +77,7 @@
                 }
             },
             flagToggle(){
-                if(this.gameStarted && !this.gameOver) {
+                if(this.gameStarted && !this.gameOver && !this.isOpen) {
                     if (this.hasFlag) {
                         this.$emit('flag-toggle', this.id, false);
                     } else {
