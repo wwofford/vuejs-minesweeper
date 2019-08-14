@@ -8,7 +8,7 @@
                         :game-over="gameOver"
                         :game-started="gameStarted"
                         :remaining-cells="remainingCells"
-                        v-on:reset-grid="resetGrid"
+                        @reset-grid="resetGrid"
                     />
                 </th>
             </tr>
@@ -22,9 +22,9 @@
                         :remaining-flags="remainingFlags"
                         :game-over="gameOver"
                         :game-started="gameStarted"
-                        v-on:explosion-triggered="triggerGameOver"
-                        v-on:opened-cell="openCell"
-                        v-on:flag-toggle="flagOnCell"
+                        @explosion-triggered="triggerGameOver"
+                        @opened-cell="openCell"
+                        @flag-toggle="flagOnCell"
                     />
                 </td>
             </tr>
@@ -268,6 +268,9 @@
 </script>
 
 <style scoped>
+    table {
+        display:inline;
+    }
     tbody {
         border: 1px solid black;
     }

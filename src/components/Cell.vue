@@ -47,6 +47,14 @@
             }
         },
 
+        watch:{
+            gameStarted(val){
+                if(val){
+                    this.explosionTriggered = false;
+                }
+            }
+        },
+
         methods: {
             cellOpened(){
                 if(!this.gameOver) {
@@ -63,9 +71,9 @@
                     if (this.hasFlag) {
                         this.$emit('flag-toggle', this.id, false);
                     } else {
-                        if (this.remainingFlags > 0) {
+                        //if (this.remainingFlags > 0) {
                             this.$emit('flag-toggle', this.id, true);
-                        }
+                        //}
                     }
                 }
             }
