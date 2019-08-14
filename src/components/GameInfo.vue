@@ -9,11 +9,22 @@
         <span title="Time since the game started">
             <font-awesome-icon class="icon-clock" icon="stopwatch" /> {{displayedTime}}
         </span>
-        <span class="icon-setting" @click="toggleSettings" style="position:relative;" title="Change grid size">
-            <font-awesome-icon icon="cog" />
+        <span class="icon-setting" @click="toggleSettings" style="position:relative;">
+            <font-awesome-icon icon="cog" title="Change grid size or difficulty" />
             <div v-if="openDropdown" class='menu'>
-                <div class="menu-item" v-for="{ title, rows, columns} in extraSettings"
-                     @click="askForNewGrid(rows, columns)" :key="'setting' + title">
+                <div class="menu-item" v-for="{ title, rows, columns} in sizeSettings"
+                     @click="askForNewGrid(rows, columns)" :key="'sizeSetting' + title"
+                     title="Change grid size"
+                >
+                    {{ title }}
+                </div>
+                <div class="menu-item break">
+                    ------------
+                </div>
+                <div class="menu-item" v-for="{ title, percent } in difficultySettings"
+                     @click="askForNewDifficulty(percent)" :key="'diffSetting' + title"
+                     title="Change difficulty"
+                >
                     {{ title }}
                 </div>
             </div>
@@ -30,7 +41,7 @@
                 displayedTime: "00:00",
                 time: 0,
                 openDropdown: false,
-                extraSettings: [
+                sizeSettings: [
                     {
                         title: "10 x 10",
                         rows: 10,
@@ -45,6 +56,20 @@
                         title: "20 x 40",
                         rows: 20,
                         columns: 40
+                    }
+                ],
+                difficultySettings : [
+                    {
+                        title: "easy",
+                        percent: .15
+                    },
+                    {
+                        title: "average",
+                        percent: .175
+                    },
+                    {
+                        title: "hard",
+                        percent: .20
                     }
                 ]
             }
@@ -94,6 +119,9 @@
             },
             askForNewGrid(rows, columns) {
                 this.$emit('change-size', rows, columns);
+            },
+            askForNewDifficulty(percent) {
+                this.$emit('change-difficulty', percent);
             },
             toggleSettings(){
                 this.openDropdown = !this.openDropdown;
@@ -145,5 +173,9 @@
     .menu-item:hover {
         background-color: lightskyblue;
         cursor: pointer;
+    }
+    .break:hover {
+        background-color: #fff !important;
+        cursor: default !important;
     }
 </style>

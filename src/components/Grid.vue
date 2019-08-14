@@ -9,6 +9,7 @@
                         :game-started="gameStarted"
                         :remaining-cells="remainingCells"
                         @change-size="sizeChange"
+                        @change-difficulty="difficultyChange"
                         @reset-grid="resetGrid"
                     />
                 </th>
@@ -59,6 +60,7 @@
             return{
                 rows: 10,
                 columns: 10,
+                difficulty: .175,
                 gameStarted: false,
                 gameOver: false,
 
@@ -90,8 +92,8 @@
             },
 
             numOfMines() {
-                // 18% of the grid will be mines
-                return Math.round(this.numOfCells * .18);
+                // % of the grid will be mines
+                return Math.round(this.numOfCells * this.difficulty);
             },
 
             numOfCellsWoMines() {
@@ -211,6 +213,11 @@
             sizeChange(r, c){
                 this.rows = r;
                 this.columns = c;
+                this.resetGrid();
+            },
+
+            difficultyChange(percent){
+                this.difficulty = percent;
                 this.resetGrid();
             },
 
