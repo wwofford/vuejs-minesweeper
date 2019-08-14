@@ -1,22 +1,22 @@
 <template>
-    <div>
-        <span @click="$emit('reset-grid')">
-            Reset
+    <div class="default">
+        <span class="icon-reset" @click="$emit('reset-grid')">
+            <font-awesome-icon icon="undo" />
         </span>
         <span>
-            Flags: {{remainingFlags}}
+            <font-awesome-icon icon="paw" /> {{remainingFlags}}
         </span>
         <span>
-            Time: {{displayedTime}}
+            <font-awesome-icon class="icon-clock" icon="stopwatch" /> {{displayedTime}}
         </span>
-        <span style="position:relative;">
-            <span @click="toggleSettings">Size</span>
+        <span class="icon-setting" @click="toggleSettings" style="position:relative;">
+            <font-awesome-icon icon="cog" />
             <div v-if="openDropdown" class='menu'>
-				<div class="menu-item" v-for="{ title, rows, columns} in extraSettings"
+                <div class="menu-item" v-for="{ title, rows, columns} in extraSettings"
                      @click="askForNewGrid(rows, columns)" :key="'setting' + title">
                     {{ title }}
                 </div>
-			</div>
+            </div>
         </span>
     </div>
 </template>
@@ -42,9 +42,9 @@
                         columns: 20
                     },
                     {
-                        title: "30 x 50",
-                        rows: 30,
-                        columns: 50
+                        title: "20 x 40",
+                        rows: 20,
+                        columns: 40
                     }
                 ]
             }
@@ -89,7 +89,6 @@
                 this.displayedTime = ("0" + Math.floor(this.time/60)).slice(-3) + ":" + ("0" + (this.time % 60)).slice(-2);
             },
             askForNewGrid(rows, columns) {
-                this.openDropdown = false;
                 this.$emit('change-size', rows, columns);
             },
             toggleSettings(){
@@ -100,6 +99,23 @@
 </script>
 
 <style scoped>
+    .default {
+        font-size: 25px;
+        background-color: lightgray;
+        padding:5px 5px 5px 5px;
+    }
+    .icon-reset {
+        float: left;
+        cursor: pointer;
+    }
+    .icon-clock {
+        padding-left: 10px;
+        color: darkgoldenrod;
+    }
+    .icon-setting {
+        float: right;
+        cursor: pointer;
+    }
     .menu {
         background-color: #fff;
         background-clip: padding-box;

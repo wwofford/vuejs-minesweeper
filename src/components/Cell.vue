@@ -2,15 +2,17 @@
     <div class="box"
         :class="{
             default: !isOpen,
-            flag : hasFlag && !isOpen,
-            mine: gameOver && !explosionTriggered && hasMine && !hasFlag,
             explosion: gameOver && explosionTriggered,
             open: isOpen && !explosionTriggered
         }"
         @click="cellOpened"
         @contextmenu.prevent="flagToggle"
     >
-        {{ neighboringMines !== 0 && !hasMine ? neighboringMines : null}}
+        <font-awesome-icon v-if="hasFlag && !isOpen" class="flag" icon="paw" />
+        <font-awesome-icon v-else-if="gameOver && !explosionTriggered && hasMine && !hasFlag"  class="mine" icon="cat" />
+        <span v-else>
+            {{ neighboringMines !== 0 && !hasMine ? neighboringMines : null}}
+        </span>
     </div>
 </template>
 
@@ -91,9 +93,9 @@
 
 <style scoped>
     .box {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        font-size: 25px;
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
         -moz-user-select: none; /* Firefox */
@@ -101,11 +103,10 @@
         user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
     }
     .flag {
-        background: forestgreen !important;
-        color: forestgreen !important;
+        color: white !important;
     }
     .mine {
-        background: orange !important;
+        color: #ff8300 !important;
     }
     .explosion {
         background: red;
