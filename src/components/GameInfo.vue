@@ -1,15 +1,15 @@
 <template>
     <div class="default">
-        <span class="icon-reset" @click="$emit('reset-grid')">
+        <span class="icon-reset" title="Reset Grid" @click="$emit('reset-grid')">
             <font-awesome-icon icon="undo" />
         </span>
-        <span>
+        <span title="Flags: initial value of flags = the number of mines">
             <font-awesome-icon icon="paw" /> {{remainingFlags}}
         </span>
-        <span>
+        <span title="Time since the game started">
             <font-awesome-icon class="icon-clock" icon="stopwatch" /> {{displayedTime}}
         </span>
-        <span class="icon-setting" @click="toggleSettings" style="position:relative;">
+        <span class="icon-setting" @click="toggleSettings" style="position:relative;" title="Change grid size">
             <font-awesome-icon icon="cog" />
             <div v-if="openDropdown" class='menu'>
                 <div class="menu-item" v-for="{ title, rows, columns} in extraSettings"
@@ -86,7 +86,11 @@
         methods: {
             updateTime() {
                 this.time++;
-                this.displayedTime = ("0" + Math.floor(this.time/60)).slice(-3) + ":" + ("0" + (this.time % 60)).slice(-2);
+                if(this.time < 3600){
+                    this.displayedTime = ("0" + Math.floor(this.time/60)).slice(-2) + ":" + ("0" + (this.time % 60)).slice(-2);
+                } else {
+                    this.displayedTime = ("0" + Math.floor(this.time/3600)).slice(-2) + ":" + ("0" + Math.floor(this.time/60)).slice(-2) + ":" + ("0" + (this.time % 60)).slice(-2);
+                }
             },
             askForNewGrid(rows, columns) {
                 this.$emit('change-size', rows, columns);
@@ -103,6 +107,7 @@
         font-size: 25px;
         background-color: lightgray;
         padding:5px 5px 5px 5px;
+        border: 1px solid black;
     }
     .icon-reset {
         float: left;

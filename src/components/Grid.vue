@@ -30,6 +30,22 @@
                 </td>
             </tr>
         </tbody>
+        <tfoot>
+            <tr>
+                <th :colspan="columns"  v-if="remainingCells !== 0 && gameStarted && !gameOver">
+                    Avoid All The Cats!
+                </th>
+                <th :colspan="columns"  v-else-if="remainingCells !== 0 && gameStarted && gameOver">
+                    OUCH! Lookout for cats
+                </th>
+                <th :colspan="columns"  v-else-if="remainingCells === 0 && gameStarted && !gameOver">
+                    YOU WON!
+                </th>
+                <th :colspan="columns"  v-else>
+                    Left Click a Cell to Start
+                </th>
+            </tr>
+        </tfoot>
     </table>
 </template>
 
@@ -278,12 +294,19 @@
 <style scoped>
     table {
         display:inline;
+        border-collapse: collapse;
     }
     tbody {
         border: 1px solid black;
+        background-color: lightgray;
     }
     td {
         border: 1px solid black;
     }
-
+    tfoot {
+        font-size: 25px;
+        background-color: lightgray;
+        padding:5px 5px 5px 5px;
+        border: 1px solid black;
+    }
 </style>

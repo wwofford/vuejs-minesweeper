@@ -9,6 +9,7 @@
         @contextmenu.prevent="flagToggle"
     >
         <font-awesome-icon v-if="hasFlag && !isOpen" class="flag" icon="paw" />
+        <font-awesome-icon v-else-if="explosionTriggered && gameOver"  class="explosion" icon="cat" />
         <font-awesome-icon v-else-if="gameOver && !explosionTriggered && hasMine && !hasFlag"  class="mine" icon="cat" />
         <span v-else>
             {{ neighboringMines !== 0 && !hasMine ? neighboringMines : null}}
@@ -96,6 +97,7 @@
         width: 30px;
         height: 30px;
         font-size: 25px;
+        color: black;
         -webkit-touch-callout: none; /* iOS Safari */
         -webkit-user-select: none; /* Safari */
         -moz-user-select: none; /* Firefox */
@@ -103,7 +105,7 @@
         user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
     }
     .flag {
-        color: white !important;
+        color: #f2edd5 !important;
     }
     .mine {
         color: #ff8300 !important;
@@ -112,11 +114,9 @@
         background: red;
     }
     .open {
-        background: white;
-        color: black
+        background: #f2edd5;
     }
     .default {
         background: black;
-        color: black;
     }
 </style>
