@@ -43,9 +43,9 @@
                 openDropdown: false,
                 sizeSettings: [
                     {
-                        title: "10 x 10",
-                        rows: 10,
-                        columns: 10
+                        title: "12 x 12",
+                        rows: 12,
+                        columns: 12
                     },
                     {
                         title: "20 x 20",

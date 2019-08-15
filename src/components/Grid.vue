@@ -76,8 +76,8 @@
         components: {GameInfo, Cell},
         data() {
             return{
-                rows: 10,
-                columns: 10,
+                rows: 12,
+                columns: 12,
                 difficulty: .175,
                 gameStarted: false,
                 gameOver: false,
