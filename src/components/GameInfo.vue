@@ -37,10 +37,19 @@
         name: "GameInfo",
         data(){
             return {
+                // Used to set or clear Interval function
                 stopwatch: null,
+                // The time that is displayed in the html
                 displayedTime: "00:00",
+                // The time elapsed in seconds
                 time: 0,
+                // whether not the settings options should dropdown
                 openDropdown: false,
+
+                // Below are the settings options displayed, these can be added to, changed, or removed
+                // Might add the ability for User to set custom in the future
+
+                //Size of the grid options
                 sizeSettings: [
                     {
                         title: "12 x 12",
@@ -58,6 +67,7 @@
                         columns: 40
                     }
                 ],
+                //Percentage of grid has mine options
                 difficultySettings : [
                     {
                         title: "easy",
@@ -75,6 +85,7 @@
             }
         },
 
+        // Properties passed in from the parent Grid component, these are reactive
         props: {
             remainingFlags: Number,
             gameOver: Boolean,
@@ -82,7 +93,10 @@
             remainingCells: Number
         },
 
+        // watch is used for watching changes in variables
+        // val is the new changed value
         watch: {
+            // watching gameStarted to either start stopwatch or reset stopwatch, displayedTime, time
             gameStarted(val) {
                 if(val){
                     this.stopwatch = setInterval(() => this.updateTime(), 1000);
@@ -95,12 +109,14 @@
                 }
             },
 
+            // watches gameOver for if the user lost in order to stop the stopwatch
             gameOver(val) {
                 if(val){
                     clearInterval(this.stopwatch);
                 }
             },
 
+            // watches remainingCells for if the user has won in order to stop the stopwatch
             remainingCells(val) {
                 if(val === 0){
                     clearInterval(this.stopwatch);
@@ -109,6 +125,7 @@
         },
 
         methods: {
+            //Interval function calls this to update time and calculate/update displayedTime
             updateTime() {
                 this.time++;
                 if(this.time < 3600){
@@ -117,12 +134,18 @@
                     this.displayedTime = ("0" + Math.floor(this.time/3600)).slice(-2) + ":" + ("0" + Math.floor(this.time/60)).slice(-2) + ":" + ("0" + (this.time % 60)).slice(-2);
                 }
             },
+
+            //User has selected a new grid size, report to parent grid
             askForNewGrid(rows, columns) {
                 this.$emit('change-size', rows, columns);
             },
+
+            //User has selected a new difficulty, report to parent grid
             askForNewDifficulty(percent) {
                 this.$emit('change-difficulty', percent);
             },
+
+            //This is used to hide or display the settings dropdown
             toggleSettings(){
                 this.openDropdown = !this.openDropdown;
             }

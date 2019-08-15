@@ -78,9 +78,13 @@
             return{
                 rows: 12,
                 columns: 12,
-                difficulty: .175,
                 gameStarted: false,
                 gameOver: false,
+
+                // Percentage of cells that have mines
+                difficulty: .175,
+
+                //Toggle used to display the win/loss image
                 displayPicture: false,
 
                 //Cheat for where the mines are located
@@ -100,6 +104,7 @@
             }
         },
         created() {
+            // When this component is created automatically all this function
             this.resetGrid();
         },
         computed: {
@@ -111,7 +116,6 @@
             },
 
             numOfMines() {
-                // % of the grid will be mines
                 return Math.round(this.numOfCells * this.difficulty);
             },
 
@@ -151,7 +155,7 @@
 
             cellNeighbors() {
                 //I weighed heavily on whether to make this or to only inspect around mines and zero
-                //However when opening neighbors of cells that had zero mines around it and after resetting, repeating checks for neighbors seemed more costly
+                //However when opening neighbors of cells that had zero mines around it and after resetting grid, repeating checks for neighbors seemed more costly
                 //This has a greater startup cost but will not need to be reran unless the size of the columns or rows changes
 
                 let grid = {}; //Method returns this object with format { cellId: [neighborId,..]}
@@ -200,6 +204,7 @@
             }
         },
         methods: {
+            //Resets the grid to default thus allowing the user to start a new game
             resetGrid() {
                 this.gameOver = false;
                 this.gameStarted = false;
@@ -227,20 +232,24 @@
                 this.remainingCells = this.numOfCellsWoMines;
                 //Resets the number of flags the user can set
                 this.remainingFlags = this.numOfMines;
+                //Makes sure the displayPicture is set to false
                 this.displayPicture = false;
             },
 
+            //User requested a change to the size of the grid
             sizeChange(r, c){
                 this.rows = r;
                 this.columns = c;
                 this.resetGrid();
             },
 
+            //User requested a change to the difficulty of the grid
             difficultyChange(percent){
                 this.difficulty = percent;
                 this.resetGrid();
             },
 
+            //Plants mines in the cells and notifies neighboring cells
             plantMines(clickedCell) {
                 //Picks a random number and adds it to a Set, average case O(n)
                 const mines = new Set();
@@ -251,7 +260,10 @@
                         mines.add(pickedCell);
                     }
                 }
+
+                //This is used as a cheat sheet to see where the mines are, use the Vue browser extension to see this value
                 this.mineLocations = mines;
+
                 //Loop each id picked to plant mine and notify neighboring cells of the mine
                 let cellNeighbors = this.cellNeighbors;
                 for(let id of mines){
@@ -265,16 +277,19 @@
                 }
             },
 
+            //The user clicked on a cell that had a mine, set gameOver and display You Lost picture
             triggerGameOver(id) {
                 this.cells[id].isOpen = true;
                 this.gameOver = true;
                 this.displayPicture = true;
             },
 
+            //User has clicked anywhere on the page after the win/loss picture had been displayed
             hidePicture() {
                 this.displayPicture = false;
             },
 
+            //Open neighboring cells once a cell with zero mines around it has been opened
             openNeighboringCells(id){
                 //Open neighboring cells if they are not already opened
                 let cellNeighbors = this.cellNeighbors;
@@ -286,6 +301,7 @@
                 }
             },
 
+            // Called when a cell is clicked on or if openNeighboringCells has been called
             openCell(id){
                 let clickedCell = this.cells[id];
                 //Check if game has started, if not then plant mines
@@ -294,8 +310,11 @@
                     this.plantMines(id);
                 }
 
+                //Checks to see if the cell has already been opened
                 if(!clickedCell.isOpen){
                     clickedCell.isOpen = true;
+
+                    //Lower remainingCell count, if it is equal to 0 the user has won so display win image
                     this.remainingCells--;
                     if(this.remainingCells === 0){
                         this.displayPicture = true;
@@ -308,12 +327,11 @@
                 }
             },
 
+            //Sets or removes the flag on a cell
             flagOnCell(id, toggleOn){
-                //Sets or removes the flag on a cell if the game has started and the cell has not been opened
                 let clickedCell = this.cells[id];
-                if(this.gameStarted && !clickedCell.isOpen){
-                    clickedCell.hasFlag = !clickedCell.hasFlag;
-                }
+
+                clickedCell.hasFlag = !clickedCell.hasFlag;
 
                 //Based on toggle, update remaining flag count
                 if(toggleOn){

@@ -20,22 +20,31 @@
 <script>
     export default {
         name: "Cell",
+        // Properties passed in from the parent Grid component, these are reactive
         props: {
             id: Number,
-            cellObject: Object,
             remainingFlags: Number,
             gameOver: Boolean,
-            gameStarted: Boolean
+            gameStarted: Boolean,
+
+            // cellObject contains properties id, hasMine, hasFlag, isOpen, and neighboringMines
+            cellObject: Object
         },
 
         data(){
             return{
+                // Whether this cell was the cause of the explosion, used for css and icons
                 explosionTriggered: false,
+
+                // cellObject's properties are not reactive by themselves, they must be hooked into this components data()
+                // This will link the two objects
                 cellReactive: this.cellObject
             }
         },
 
         computed: {
+            // Furthermore to make the properties of cellReactive themselves reactive, we need a computed function to retrieve them
+            // These will now update anytime cellObject's properties change
             hasFlag() {
                 return this.cellReactive.hasFlag;
             },
@@ -54,11 +63,15 @@
         },
 
         watch:{
+            // Watches for if the gameStarted value has changed to reset explosionTrigger
             gameStarted(val){
                 if(val){
                     this.explosionTriggered = false;
                 }
             },
+
+            // Watches for if the id has changed, this will happen when the grid changes size
+            // In turn we will need to link the new cellObject
             id(val) {
                 if(val !== this.objectId){
                     this.cellReactive = this.cellObject;
@@ -67,6 +80,7 @@
         },
 
         methods: {
+            //User left clicked on the cell, report it to parent grid
             cellOpened(){
                 if(!this.gameOver) {
                     if (this.hasMine) {
@@ -77,6 +91,8 @@
                     }
                 }
             },
+
+            //User right clicked on the cell, report it to the parent grid only if setting a flag is possible
             flagToggle(){
                 if(this.gameStarted && !this.gameOver && !this.isOpen) {
                     if (this.hasFlag) {
