@@ -1,53 +1,71 @@
 <template>
-    <table>
-        <thead>
-            <tr>
-                <th :colspan="columns">
-                    <GameInfo
-                        :remaining-flags="remainingFlags"
-                        :game-over="gameOver"
-                        :game-started="gameStarted"
-                        :remaining-cells="remainingCells"
-                        @change-size="sizeChange"
-                        @change-difficulty="difficultyChange"
-                        @reset-grid="resetGrid"
-                    />
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="(rowObj, rowId) in yxGrid" :key="'tr' + rowId">
-                <td v-for="(cellId, columnId) in rowObj" v-bind:key="'tr' + rowId + 'td' + columnId">
-                    <Cell
-                        :id="cellId"
-                        :cell-object="cells[cellId]"
-                        :remaining-flags="remainingFlags"
-                        :game-over="gameOver"
-                        :game-started="gameStarted"
-                        @explosion-triggered="triggerGameOver"
-                        @opened-cell="openCell"
-                        @flag-toggle="flagOnCell"
-                    />
-                </td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                <th :colspan="columns"  v-if="remainingCells !== 0 && gameStarted && !gameOver">
-                    Avoid All The Cats!
-                </th>
-                <th :colspan="columns"  v-else-if="remainingCells !== 0 && gameStarted && gameOver">
-                    OUCH! Lookout for cats
-                </th>
-                <th :colspan="columns"  v-else-if="remainingCells === 0 && gameStarted && !gameOver">
-                    YOU WON!
-                </th>
-                <th :colspan="columns"  v-else>
-                    Left Click a Cell to Start
-                </th>
-            </tr>
-        </tfoot>
-    </table>
+    <span>
+        <span class="overlay" v-if="displayPicture"  @click="hidePicture">
+            <span class="overlay-inner" v-if="remainingCells === 0 && gameStarted && !gameOver">
+                <h1>You Won!</h1>
+                <img src="../assets/mouseCheese.png" alt="You Won!"/><br>
+                <button class="resetBtn" type="button" @click="resetGrid()">
+                   <font-awesome-icon icon="undo" /> Reset
+                </button>
+            </span>
+            <span class="overlay-inner" v-if="remainingCells !== 0 && gameStarted && gameOver">
+                <h1>You Lost...</h1>
+                <img src="../assets/mouseCat.png" alt="You Lost..."/><br>
+                <button class="resetBtn" type="button" @click="resetGrid()">
+                   <font-awesome-icon icon="undo" /> Reset
+                </button>
+            </span>
+        </span>
+        <table>
+            <thead>
+                <tr>
+                    <th :colspan="columns">
+                        <GameInfo
+                            :remaining-flags="remainingFlags"
+                            :game-over="gameOver"
+                            :game-started="gameStarted"
+                            :remaining-cells="remainingCells"
+                            @change-size="sizeChange"
+                            @change-difficulty="difficultyChange"
+                            @reset-grid="resetGrid"
+                        />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(rowObj, rowId) in yxGrid" :key="'tr' + rowId">
+                    <td v-for="(cellId, columnId) in rowObj" v-bind:key="'tr' + rowId + 'td' + columnId">
+                        <Cell
+                            :id="cellId"
+                            :cell-object="cells[cellId]"
+                            :remaining-flags="remainingFlags"
+                            :game-over="gameOver"
+                            :game-started="gameStarted"
+                            @explosion-triggered="triggerGameOver"
+                            @opened-cell="openCell"
+                            @flag-toggle="flagOnCell"
+                        />
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th :colspan="columns"  v-if="remainingCells !== 0 && gameStarted && !gameOver">
+                        Avoid All The Cats!
+                    </th>
+                    <th :colspan="columns"  v-else-if="remainingCells !== 0 && gameStarted && gameOver">
+                        OUCH! Lookout for cats
+                    </th>
+                    <th :colspan="columns"  v-else-if="remainingCells === 0 && gameStarted && !gameOver">
+                        YOU WON!
+                    </th>
+                    <th :colspan="columns"  v-else>
+                        Left Click a Cell to Start
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+    </span>
 </template>
 
 <script>
@@ -63,6 +81,7 @@
                 difficulty: .175,
                 gameStarted: false,
                 gameOver: false,
+                displayPicture: false,
 
                 //Cheat for where the mines are located
                 mineLocations: null,
@@ -208,6 +227,7 @@
                 this.remainingCells = this.numOfCellsWoMines;
                 //Resets the number of flags the user can set
                 this.remainingFlags = this.numOfMines;
+                this.displayPicture = false;
             },
 
             sizeChange(r, c){
@@ -248,6 +268,11 @@
             triggerGameOver(id) {
                 this.cells[id].isOpen = true;
                 this.gameOver = true;
+                this.displayPicture = true;
+            },
+
+            hidePicture() {
+                this.displayPicture = false;
             },
 
             openNeighboringCells(id){
@@ -272,6 +297,9 @@
                 if(!clickedCell.isOpen){
                     clickedCell.isOpen = true;
                     this.remainingCells--;
+                    if(this.remainingCells === 0){
+                        this.displayPicture = true;
+                    }
 
                     //Check if cell has neighboring mines. If not, call method to open neighboring cells
                     if(clickedCell.neighboringMines === 0){
@@ -315,5 +343,31 @@
         background-color: lightgray;
         padding:5px 5px 5px 5px;
         border: 1px solid black;
+    }
+    .resetBtn {
+        padding: 20px;
+        font-size: 25px;
+        margin-top: 20px;
+    }
+    .overlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 2;
+    }
+    .overlay-inner {
+        top: 50%;
+        left: 50%;
+    }
+    img {
+        width: 400px;
+    }
+    h1 {
+        color: white;
     }
 </style>
