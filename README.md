@@ -1,11 +1,16 @@
 # minesweeper
 
+## Project setup, compile, and hot-reloads
+```
+npm start
+```
+
 ## Project setup
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads Client for development
 ```
 npm run serve
 ```
