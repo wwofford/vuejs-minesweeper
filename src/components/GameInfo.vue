@@ -52,6 +52,11 @@
                 //Size of the grid options
                 sizeSettings: [
                     {
+                        title: "6 x 9",
+                        rows: 6,
+                        columns: 9
+                    },
+                    {
                         title: "12 x 12",
                         rows: 12,
                         columns: 12

@@ -136,15 +136,13 @@
                 return grid;
             },
 
-            //Contains cell id to yx format, ie: { cellId: { x:number, y:number  }}
+            //Contains cell id to yx format, ie: cellId { x:number, y:number  }}
             //This is used for calculating neighboring mines or opening a neighboring cell
             cellsGrid() {
-                let cellId = 0;
-                let grid = {};
+                let grid = [];
                 for(let r=0; r < this.rows; r++) {
                     for(let c=0; c < this.columns; c++) {
-                        grid[cellId] = {x: c, y: r};
-                        cellId++;
+                        grid.push({x: c, y: r});
                     }
                 }
                 return grid;
@@ -229,7 +227,7 @@
                 this.mineLocations = null;
                 //Resets the number of cells required to open to win the game
                 this.remainingCells = this.numOfCellsWoMines;
-                //Resets the number of flags the user can set
+                //Resets the number of flags to match the mine count
                 this.remainingFlags = this.numOfMines;
                 //Makes sure the displayPicture is set to false
                 this.displayPicture = false;
@@ -294,7 +292,7 @@
                 let cellNeighbors = this.cellNeighbors;
                 //neighbor refers to the cell id of the neighbor
                 for(let neighbor of cellNeighbors[id]) {
-                    if( !this.cells[neighbor].isOpen ) {
+                    if(!this.cells[neighbor].isOpen) {
                         this.openCell(neighbor);
                     }
                 }
@@ -304,7 +302,7 @@
             openCell(id) {
                 let clickedCell = this.cells[id];
                 //Check if game has started, if not then plant mines
-                if( !this.gameStarted ) {
+                if(!this.gameStarted) {
                     this.gameStarted = true;
                     this.plantMines(id);
                 }
