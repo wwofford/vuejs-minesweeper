@@ -89,8 +89,8 @@
                 displayPicture: false,
                 //Cheat for where the mines are located
                 mineLocations: null,
-                //Contains cell id(number) to properties, format { id: { //properties// }}
-                cells: {},
+                //Array of cell properties, index is equal to cell id
+                cells: [],
                 //Remaining flags keeps track of the number of flags the user has left to set
                 remainingFlags: 0,
                 //Remaining cells is used to determine how close a user is to winning the game
@@ -140,23 +140,15 @@
             resetGrid() {
                 this.gameOver = false;
                 this.gameStarted = false;
+                //Set cell to default
                 for(let id=0; id < this.numOfCells; id++) {
-                    //Check if cell exists
-                    if(!this.cells.hasOwnProperty(id)) {
-                        this.cells[id] = {
-                            id: id,
-                            isOpen: false,
-                            neighboringMines: 0,
-                            hasMine: false,
-                            hasFlag: false
-                        };
-                    } else {
-                        //Reset properties
-                        this.cells[id].isOpen = false;
-                        this.cells[id].neighboringMines = 0;
-                        this.cells[id].hasMine = false;
-                        this.cells[id].hasFlag = false;
-                    }
+                    this.cells[id] = {
+                        id: id,
+                        isOpen: false,
+                        neighboringMines: 0,
+                        hasMine: false,
+                        hasFlag: false
+                    };
                 }
                 //Nulls the mine locations of the last game
                 this.mineLocations = null;

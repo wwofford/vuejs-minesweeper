@@ -27,7 +27,6 @@
             remainingFlags: Number,
             gameOver: Boolean,
             gameStarted: Boolean,
-
             //cellObject contains properties id, hasMine, hasFlag, isOpen, and neighboringMines
             cellObject: Object
         },
@@ -64,19 +63,13 @@
         },
 
         watch: {
-            //Watches for if the gameStarted value has changed to reset explosionTrigger
+            //Watches for if the gameStarted value has changed to reset explosionTrigger and link to new cellObject
             gameStarted(val) {
                 if(val) {
                     this.explosionTriggered = false;
                 }
-            },
-
-            //Watches for if the id has changed, this will happen when the grid changes size
-            //In turn we will need to link the new cellObject
-            id(val) {
-                if(val !== this.objectId) {
-                    this.cellReactive = this.cellObject;
-                }
+                //We need to link the new cellObject
+                this.cellReactive = this.cellObject;
             }
         },
 
