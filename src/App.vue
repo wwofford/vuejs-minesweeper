@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <button class="anotherBtn" @click="anotherGrid(true)">
+    <button @click="anotherGrid(true)" class="anotherBtn">
       +Grid
     </button>
-    <button class="anotherBtn add-margin" v-if="grids > 1" @click="anotherGrid(false)">
+    <button v-if="grids > 1" @click="anotherGrid(false)" class="anotherBtn add-margin">
       -Grid
     </button>
     <br>
     <ul>
-      <Grid class="grid-pad" v-for="n in grids" :key="'grid#' + n"/>
+      <Grid v-for="n in grids" :key="'grid#' + n" class="grid-pad"/>
     </ul>
   </div>
 </template>
@@ -17,7 +17,7 @@
 import Grid from "@/components/Grid";
 
 export default {
-  name: 'app',
+  name: 'App',
   components: { Grid },
 
   data() {

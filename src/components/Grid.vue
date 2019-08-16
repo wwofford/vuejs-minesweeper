@@ -1,17 +1,17 @@
 <template>
     <span>
-        <span class="overlay" v-if="displayPicture"  @click="hidePicture">
-            <span class="overlay-inner" v-if="remainingCells === 0 && gameStarted && !gameOver">
+        <span v-if="displayPicture" @click="hidePicture"  class="overlay">
+            <span v-if="remainingCells === 0 && gameStarted && !gameOver" class="overlay-inner">
                 <h1>You Won!</h1>
                 <img src="../assets/mouseCheese.png" alt="You Won!"/><br>
-                <button class="resetBtn" type="button" @click="resetGrid()">
+                <button @click="resetGrid()" class="resetBtn" type="button">
                    <font-awesome-icon icon="undo" /> Reset
                 </button>
             </span>
-            <span class="overlay-inner" v-if="remainingCells !== 0 && gameStarted && gameOver">
+            <span v-if="remainingCells !== 0 && gameStarted && gameOver" class="overlay-inner">
                 <h1>You Lost...</h1>
                 <img src="../assets/mouseCat.png" alt="You Lost..."/><br>
-                <button class="resetBtn" type="button" @click="resetGrid()">
+                <button @click="resetGrid()" class="resetBtn" type="button">
                    <font-awesome-icon icon="undo" /> Reset
                 </button>
             </span>
@@ -99,11 +99,6 @@
             }
         },
 
-        //When this component is created automatically call this function
-        created() {
-            this.resetGrid();
-        },
-
         //Computed properties are memoized based on their reactive dependencies.
         //A computed property will only re-evaluate when one of its reactive dependencies have changed.
         computed: {
@@ -133,6 +128,11 @@
                 }
                 return grid;
             }
+        },
+
+        //When this component is created automatically call this function
+        created() {
+            this.resetGrid();
         },
 
         methods: {

@@ -1,12 +1,12 @@
 <template>
-    <div class="box"
-        :class="{
+    <div :class="{
             default: !isOpen,
             explosion: gameOver && explosionTriggered,
             open: isOpen && !explosionTriggered
         }"
         @click="cellOpened"
         @contextmenu.prevent="flagToggle"
+        class="box"
     >
         <font-awesome-icon v-if="hasFlag && !isOpen" class="flag" icon="paw" />
         <font-awesome-icon v-else-if="explosionTriggered && gameOver"  class="explosion" icon="cat" />

@@ -1,6 +1,6 @@
 <template>
     <div class="default">
-        <span class="icon-reset" title="Reset Grid" @click="$emit('reset-grid')">
+        <span @click="$emit('reset-grid')" class="icon-reset" title="Reset Grid">
             <font-awesome-icon icon="undo" />
         </span>
         <span title="Flags: initial value of flags = the number of mines">
@@ -9,11 +9,11 @@
         <span title="Time since the game started">
             <font-awesome-icon class="icon-clock" icon="stopwatch" /> {{ displayedTime }}
         </span>
-        <span class="icon-setting" @click="toggleSettings" style="position:relative;">
+        <span @click="toggleSettings" class="icon-setting" style="position:relative;">
             <font-awesome-icon icon="cog" title="Change grid size or difficulty" />
             <div v-if="openDropdown" class='menu'>
-                <div class="menu-item" v-for="{ title, rows, columns} in sizeSettings"
-                     @click="askForNewGrid(rows, columns)" :key="'sizeSetting' + title"
+                <div v-for="{ title, rows, columns} in sizeSettings" @click="askForNewGrid(rows, columns)"
+                     :key="'sizeSetting' + title" class="menu-item"
                      title="Change grid size"
                 >
                     {{ title }}
@@ -21,8 +21,8 @@
                 <div class="menu-item break">
                     ------------
                 </div>
-                <div class="menu-item" v-for="{ title, percent } in difficultySettings"
-                     @click="askForNewDifficulty(percent)" :key="'diffSetting' + title"
+                <div v-for="{ title, percent } in difficultySettings" @click="askForNewDifficulty(percent)"
+                     :key="'diffSetting' + title" class="menu-item"
                      title="Change difficulty"
                 >
                     {{ title }}
@@ -36,6 +36,14 @@
     const defaultTime = "00:00";
     export default {
         name: "GameInfo",
+
+        //Properties passed in from the parent Grid component, these are reactive
+        props: {
+            remainingFlags: Number,
+            gameOver: Boolean,
+            gameStarted : Boolean,
+            remainingCells: Number
+        },
 
         data() {
             return {
@@ -88,14 +96,6 @@
                     }
                 ]
             }
-        },
-
-        //Properties passed in from the parent Grid component, these are reactive
-        props: {
-            remainingFlags: Number,
-            gameOver: Boolean,
-            gameStarted : Boolean,
-            remainingCells: Number
         },
 
         //watch is used for watching changes in variables
