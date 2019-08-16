@@ -96,11 +96,7 @@
             //User right clicked on the cell, report it to the parent grid only if setting a flag is possible
             flagToggle() {
                 if(this.gameStarted && !this.gameOver && !this.isOpen) {
-                    if(this.hasFlag) {
-                        this.$emit('flag-toggle', this.id, false);
-                    } else {
-                        this.$emit('flag-toggle', this.id, true);
-                    }
+                    this.$emit('flag-toggle', this.id);
                 }
             }
         }

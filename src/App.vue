@@ -1,15 +1,14 @@
 <template>
   <div id="app">
-    <button class="anotherBtn" v-if="!secondGrid" @click="anotherGrid">
-      Want to have two grids?
+    <button class="anotherBtn" @click="anotherGrid(true)">
+      +Grid
     </button>
-    <button class="anotherBtn" v-if="secondGrid" @click="anotherGrid">
-      I only want one grid
+    <button class="anotherBtn add-margin" v-if="grids > 1" @click="anotherGrid(false)">
+      -Grid
     </button>
     <br>
     <ul>
-      <Grid />
-      <Grid class="grid-pad" v-if="secondGrid" />
+      <Grid class="grid-pad" v-for="n in grids" :key="'grid#' + n"/>
     </ul>
   </div>
 </template>
@@ -23,14 +22,18 @@ export default {
 
   data() {
     return {
-      secondGrid: false
+      grids: 1,
     }
   },
 
   methods: {
-    //toggle a second grid to show that each grid is its own separate component
-    anotherGrid() {
-      this.secondGrid = !this.secondGrid;
+    //Add or subject grids, to show that each grid is its own separate component
+    anotherGrid(add) {
+      if(add) {
+        this.grids++;
+      } else {
+        this.grids--;
+      }
     }
   }
 }
@@ -43,16 +46,22 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 10px;
+    margin-top: 5px;
   }
   .anotherBtn {
-    padding: 10px;
+    padding: 5px;
     font-size: 20px;
+    font-weight: bold;
+    color: #212529;
   }
   .grid-pad {
     padding-left: 10px;
   }
   ul {
     padding-left: 0;
+    margin-top: 6px;
+  }
+  .add-margin {
+    margin-left: 12px;
   }
 </style>

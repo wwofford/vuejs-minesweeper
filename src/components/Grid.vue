@@ -33,8 +33,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(rowObj, rowId) in yxGrid" :key="'tr' + rowId">
-                    <td v-for="(cellId, columnId) in rowObj" v-bind:key="'tr' + rowId + 'td' + columnId">
+                <tr v-for="(rowArr, rowId) in yxGrid" :key="'tr' + rowId">
+                    <td v-for="(cellId, columnId) in rowArr" v-bind:key="'tr' + rowId + 'td' + columnId">
                         <Cell
                             :id="cellId"
                             :cell-object="cells[cellId]"
@@ -94,7 +94,6 @@
                 //Remaining flags keeps track of the number of flags the user has left to set
                 remainingFlags: 0,
                 //Remaining cells is used to determine how close a user is to winning the game
-                //When the user opens a cell that is not a mine, the value will subject by 1
                 //When it reaches 0, the user will have won
                 remainingCells: 0,
             }
@@ -105,7 +104,7 @@
             this.resetGrid();
         },
 
-        //Computed properties are cached based on their reactive dependencies.
+        //Computed properties are memoized based on their reactive dependencies.
         //A computed property will only re-evaluate when one of its reactive dependencies have changed.
         computed: {
             numOfCells() {
@@ -120,14 +119,13 @@
                 return this.numOfCells - this.numOfMines;
             },
 
-            //Contains all yx format to cell id, ie:  { row: { column: cellId }}
-            //This is used for building the <tr> --> y and <td> --> x in the table
+            //Multidimensional array is used for building the <tr> --> y and <td> --> x in the table
             //cellId is used to reference back to the "cells" object
             yxGrid() {
                 let cellId = 0;
-                let grid = {};
+                const grid = [];
                 for(let r=0; r < this.rows; r++) {
-                    grid[r] = {};
+                    grid[r] = [];
                     for(let c=0; c < this.columns; c++) {
                         grid[r][c] = cellId;
                         cellId++;
@@ -136,75 +134,41 @@
                 return grid;
             },
 
-            //Contains cell id to yx format, ie: cellId { x:number, y:number  }}
-            //This is used for calculating neighboring mines or opening a neighboring cell
-            cellsGrid() {
-                let grid = [];
-                for(let r=0; r < this.rows; r++) {
-                    for(let c=0; c < this.columns; c++) {
-                        grid.push({x: c, y: r});
-                    }
-                }
-                return grid;
-            },
-
-            //I weighed heavily on whether to make this or to only inspect around mines and zero
-            //However when opening neighbors of cells that had zero mines around it and after resetting grid, repeating checks for neighbors seemed more costly
-            //This has a greater startup cost but will not need to be reran unless the size of the columns or rows changes
-            //Method returns this object with format "{ cellId: [neighborId,..]}"
+            //Calculates neighbors of each cell and stores them in an array
             cellNeighbors() {
-                let grid = {};
-
-                //yxGrid[y][x] returns cell id
-                let yxGrid = this.yxGrid;
-                //cellsGrid[id] returns {x: Number, y: Number}
-                let cellGrid = this.cellsGrid;
-
+                const grid = [];
                 for(let id=0; id < this.numOfCells; id++) {
-                    grid[id]=[];
-
                     //Gets xy location based of cell id
-                    let x = cellGrid[id].x;
-                    let y = cellGrid[id].y;
+                    const x = id % this.columns;
+                    const y = Math.floor(id / this.columns);
 
-                    // eslint-disable-next-line no-console
-                    //If COLUMN exists to the LEFT
-                    let hasLeftX = false;
-                    if(yxGrid[y].hasOwnProperty(x-1)) {
-                        grid[id].push(yxGrid[y][x-1]);
-                        hasLeftX = true;
-                    }
-
-                    //If COLUMN exists to the RIGHT
-                    let hasRightX = false;
-                    if(yxGrid[y].hasOwnProperty(x+1)) {
-                        grid[id].push(yxGrid[y][x+1]);
-                        hasRightX = true;
-                    }
-
-                    //Calculation of which columns in a new row to add
-                    let startingX = hasLeftX ? x-1 : x;
-                    let endingX = hasRightX ? x+1 : x;
-                    for(let i=startingX; i <= endingX; i++) {
-                        //If ROW exists BELOW, add neighboring column
-                        if(yxGrid.hasOwnProperty(y - 1)) {
-                            grid[id].push(yxGrid[y-1][i]);
-                        }
-                        //If ROW exists ABOVE, add neighboring column
-                        if(yxGrid.hasOwnProperty(y+1)) {
-                            grid[id].push(yxGrid[y+1][i]);
+                    //Find neighboring cellIds of this id
+                    const neighbors = [];
+                    for(let r=-1; r < 2; r++) {
+                        //Check if row exists
+                        const row = y + r;
+                        if(row >= 0 && row < this.rows) {
+                            for (let c = -1; c < 2; c++) {
+                                //Check if column exists
+                                const column = x + c;
+                                if(column >= 0 && column < this.columns) {
+                                    neighbors.push(this.yxGrid[row][column]);
+                                }
+                            }
                         }
                     }
+                    //Filter to not include this id
+                    grid.push(neighbors.filter((cellId) => cellId !== id));
                 }
                 return grid;
             }
         },
+
         methods: {
             //Resets the grid to default thus allowing the user to start a new game
             resetGrid() {
                 this.gameOver = false;
                 this.gameStarted = false;
-
                 for(let id=0; id < this.numOfCells; id++) {
                     //Check if cell exists
                     if(!this.cells.hasOwnProperty(id)) {
@@ -251,7 +215,7 @@
                 //Picks a random number and adds it to a Set, average case O(n)
                 const mines = new Set();
                 while(mines.size < this.numOfMines) {
-                    let pickedCell = Math.floor(Math.random() * this.numOfCells);
+                    const pickedCell = Math.floor(Math.random() * this.numOfCells);
                     //Checks to see if the random number is the first cell clicked, if so skip
                     if(pickedCell !== clickedCell) {
                         mines.add(pickedCell);
@@ -262,13 +226,12 @@
                 this.mineLocations = mines;
 
                 //Loop each id picked to plant mine and notify neighboring cells of the mine
-                let cellNeighbors = this.cellNeighbors;
                 for(let id of mines) {
                     //add mine to cell
                     this.cells[id].hasMine = true;
 
                     //add +1 to neighboring mine count for all neighbors
-                    for(let neighbor of cellNeighbors[id]) {
+                    for(let neighbor of this.cellNeighbors[id]) {
                         this.cells[neighbor].neighboringMines += 1;
                     }
                 }
@@ -289,9 +252,8 @@
             //Open neighboring cells once a cell with zero mines around it has been opened
             openNeighboringCells(id) {
                 //Open neighboring cells if they are not already opened
-                let cellNeighbors = this.cellNeighbors;
                 //neighbor refers to the cell id of the neighbor
-                for(let neighbor of cellNeighbors[id]) {
+                for(let neighbor of this.cellNeighbors[id]) {
                     if(!this.cells[neighbor].isOpen) {
                         this.openCell(neighbor);
                     }
@@ -325,13 +287,13 @@
             },
 
             //Sets or removes the flag on a cell
-            flagOnCell(id, toggleOn) {
+            flagOnCell(id) {
                 let clickedCell = this.cells[id];
 
                 clickedCell.hasFlag = !clickedCell.hasFlag;
 
                 //Based on toggle, update remaining flag count
-                if(toggleOn) {
+                if(clickedCell.hasFlag) {
                     this.remainingFlags--;
                 } else{
                     this.remainingFlags++;
