@@ -132,35 +132,6 @@
                     }
                 }
                 return grid;
-            },
-
-            //Calculates neighbors of each cell and stores them in an array
-            cellNeighbors() {
-                const grid = [];
-                for(let id=0; id < this.numOfCells; id++) {
-                    //Gets xy location based of cell id
-                    const x = id % this.columns;
-                    const y = Math.floor(id / this.columns);
-
-                    //Find neighboring cellIds of this id
-                    const neighbors = [];
-                    for(let r=-1; r < 2; r++) {
-                        //Check if row exists
-                        const row = y + r;
-                        if(row >= 0 && row < this.rows) {
-                            for (let c = -1; c < 2; c++) {
-                                //Check if column exists
-                                const column = x + c;
-                                if(column >= 0 && column < this.columns) {
-                                    neighbors.push(this.yxGrid[row][column]);
-                                }
-                            }
-                        }
-                    }
-                    //Filter to not include this id
-                    grid.push(neighbors.filter((cellId) => cellId !== id));
-                }
-                return grid;
             }
         },
 
@@ -210,6 +181,18 @@
                 this.resetGrid();
             },
 
+            //The user clicked on a cell that had a mine, set gameOver and display You Lost picture
+            triggerGameOver(id) {
+                this.cells[id].isOpen = true;
+                this.gameOver = true;
+                this.displayPicture = true;
+            },
+
+            //User has clicked anywhere on the page after the win/loss picture had been displayed
+            hidePicture() {
+                this.displayPicture = false;
+            },
+
             //Plants mines in the cells and notifies neighboring cells
             plantMines(clickedCell) {
                 //Picks a random number and adds it to a Set, average case O(n)
@@ -231,29 +214,42 @@
                     this.cells[id].hasMine = true;
 
                     //add +1 to neighboring mine count for all neighbors
-                    for(let neighbor of this.cellNeighbors[id]) {
+                    for(let neighbor of this.getNeighbors(id)) {
                         this.cells[neighbor].neighboringMines += 1;
                     }
                 }
             },
 
-            //The user clicked on a cell that had a mine, set gameOver and display You Lost picture
-            triggerGameOver(id) {
-                this.cells[id].isOpen = true;
-                this.gameOver = true;
-                this.displayPicture = true;
-            },
+            //Get the neighbors of a cell when mines are being planted or a cell with zero neighboring mines has been opened
+            getNeighbors(id) {
+                //Gets xy location based of cell id
+                const x = id % this.columns;
+                const y = Math.floor(id / this.columns);
 
-            //User has clicked anywhere on the page after the win/loss picture had been displayed
-            hidePicture() {
-                this.displayPicture = false;
+                //Find neighboring cellIds of this id
+                const neighbors = [];
+                for(let r=-1; r < 2; r++) {
+                    //Check if row exists
+                    const row = y + r;
+                    if(row >= 0 && row < this.rows) {
+                        for (let c = -1; c < 2; c++) {
+                            //Check if column exists
+                            const column = x + c;
+                            if(column >= 0 && column < this.columns) {
+                                neighbors.push(this.yxGrid[row][column]);
+                            }
+                        }
+                    }
+                }
+                //Filter to not include this id
+                return neighbors.filter((cellId) => cellId !== id);
             },
 
             //Open neighboring cells once a cell with zero mines around it has been opened
             openNeighboringCells(id) {
                 //Open neighboring cells if they are not already opened
                 //neighbor refers to the cell id of the neighbor
-                for(let neighbor of this.cellNeighbors[id]) {
+                for(let neighbor of this.getNeighbors(id)) {
                     if(!this.cells[neighbor].isOpen) {
                         this.openCell(neighbor);
                     }
