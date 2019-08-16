@@ -19,17 +19,17 @@ import Grid from "@/components/Grid";
 
 export default {
   name: 'app',
-  components: {
-    Grid,
-  },
+  components: { Grid },
+
   data() {
     return {
       secondGrid: false
     }
   },
-  methods:{
+
+  methods: {
     //toggle a second grid to show that each grid is its own separate component
-    anotherGrid(){
+    anotherGrid() {
       this.secondGrid = !this.secondGrid;
     }
   }

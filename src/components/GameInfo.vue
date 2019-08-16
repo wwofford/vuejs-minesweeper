@@ -4,10 +4,10 @@
             <font-awesome-icon icon="undo" />
         </span>
         <span title="Flags: initial value of flags = the number of mines">
-            <font-awesome-icon icon="paw" /> {{remainingFlags}}
+            <font-awesome-icon icon="paw" /> {{ remainingFlags }}
         </span>
         <span title="Time since the game started">
-            <font-awesome-icon class="icon-clock" icon="stopwatch" /> {{displayedTime}}
+            <font-awesome-icon class="icon-clock" icon="stopwatch" /> {{ displayedTime }}
         </span>
         <span class="icon-setting" @click="toggleSettings" style="position:relative;">
             <font-awesome-icon icon="cog" title="Change grid size or difficulty" />
@@ -33,22 +33,22 @@
 </template>
 
 <script>
+    const defaultTime = "00:00";
     export default {
         name: "GameInfo",
-        data(){
+
+        data() {
             return {
-                // Used to set or clear Interval function
+                //Used to set or clear Interval function
                 stopwatch: null,
-                // The time that is displayed in the html
-                displayedTime: "00:00",
-                // The time elapsed in seconds
+                //The time that is displayed in the html
+                displayedTime: defaultTime,
+                //The time elapsed in seconds
                 time: 0,
-                // whether not the settings options should dropdown
+                //Whether not the settings options should dropdown
                 openDropdown: false,
-
-                // Below are the settings options displayed, these can be added to, changed, or removed
-                // Might add the ability for User to set custom in the future
-
+                //Below are the settings options displayed, these can be added to, changed, or removed
+                //Might add the ability for User to set custom in the future
                 //Size of the grid options
                 sizeSettings: [
                     {
@@ -85,7 +85,7 @@
             }
         },
 
-        // Properties passed in from the parent Grid component, these are reactive
+        //Properties passed in from the parent Grid component, these are reactive
         props: {
             remainingFlags: Number,
             gameOver: Boolean,
@@ -93,32 +93,32 @@
             remainingCells: Number
         },
 
-        // watch is used for watching changes in variables
-        // val is the new changed value
+        //watch is used for watching changes in variables
+        //val is the new changed value
         watch: {
-            // watching gameStarted to either start stopwatch or reset stopwatch, displayedTime, time
+            //watches gameStarted in order to either start stopwatch or reset stopwatch, displayedTime, time
             gameStarted(val) {
-                if(val){
-                    this.stopwatch = setInterval(() => this.updateTime(), 1000);
+                if(val) {
+                    this.stopwatch = setInterval(this.updateTime, 1000);
                 } else {
                     if(this.stopwatch !== null){
                         clearInterval(this.stopwatch);
                     }
                     this.time = 0;
-                    this.displayedTime = "00:00";
+                    this.displayedTime = defaultTime;
                 }
             },
 
-            // watches gameOver for if the user lost in order to stop the stopwatch
+            //watches gameOver for if the user lost in order to stop the stopwatch
             gameOver(val) {
-                if(val){
+                if(val) {
                     clearInterval(this.stopwatch);
                 }
             },
 
-            // watches remainingCells for if the user has won in order to stop the stopwatch
+            //watches remainingCells for if the user has won in order to stop the stopwatch
             remainingCells(val) {
-                if(val === 0){
+                if(val === 0) {
                     clearInterval(this.stopwatch);
                 }
             }
@@ -128,11 +128,12 @@
             //Interval function calls this to update time and calculate/update displayedTime
             updateTime() {
                 this.time++;
-                if(this.time < 3600){
-                    this.displayedTime = ("0" + Math.floor(this.time/60)).slice(-2) + ":" + ("0" + (this.time % 60)).slice(-2);
-                } else {
-                    this.displayedTime = ("0" + Math.floor(this.time/3600)).slice(-2) + ":" + ("0" + Math.floor(this.time/60)).slice(-2) + ":" + ("0" + (this.time % 60)).slice(-2);
-                }
+                let hmsArray = [
+                    this.time < 3600 ? null : String(Math.floor(this.time/3600)).padStart(2, '0'),
+                    String(Math.floor(this.time/60) % 60).padStart(2, '0'),
+                    String(this.time % 60).padStart(2, '0')
+                ];
+                this.displayedTime = hmsArray.filter((duration) => duration !== null).join(':');
             },
 
             //User has selected a new grid size, report to parent grid
@@ -146,7 +147,7 @@
             },
 
             //This is used to hide or display the settings dropdown
-            toggleSettings(){
+            toggleSettings() {
                 this.openDropdown = !this.openDropdown;
             }
         }
