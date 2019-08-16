@@ -221,13 +221,11 @@
                 //Find neighboring cellIds of this id
                 const neighbors = [];
                 for(let r=-1; r < 2; r++) {
-                    //Check if row exists
                     const row = y + r;
-                    if(row >= 0 && row < this.rows) {
+                    if(this.yxGrid[row]){
                         for (let c = -1; c < 2; c++) {
-                            //Check if column exists
                             const column = x + c;
-                            if(column >= 0 && column < this.columns) {
+                            if(this.yxGrid[row][column]){
                                 neighbors.push(this.yxGrid[row][column]);
                             }
                         }
