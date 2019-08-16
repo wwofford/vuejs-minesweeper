@@ -330,7 +330,7 @@
         left: 50%;
     }
     img {
-        width: 400px;
+        width: 800px;
     }
     h1 {
         color: white;
