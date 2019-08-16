@@ -23,11 +23,18 @@
 
         //Properties passed in from the parent Grid component, these are reactive
         props: {
-            id: Number,
-            remainingFlags: Number,
             gameOver: Boolean,
             gameStarted: Boolean,
+            id: {
+                type: Number,
+                default: 0
+            },
+            remainingFlags: {
+                type: Number,
+                default: 0
+            },
             //cellObject contains properties id, hasMine, hasFlag, isOpen, and neighboringMines
+            // eslint-disable-next-line
             cellObject: Object
         },
 

@@ -39,10 +39,16 @@
 
         //Properties passed in from the parent Grid component, these are reactive
         props: {
-            remainingFlags: Number,
             gameOver: Boolean,
             gameStarted : Boolean,
-            remainingCells: Number
+            remainingFlags: {
+                type: Number,
+                default: 0
+            },
+            remainingCells: {
+                type: Number,
+                default: 0
+            }
         },
 
         data() {
