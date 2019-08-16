@@ -10,7 +10,7 @@
             </span>
             <span v-if="remainingCells !== 0 && gameStarted && gameOver" class="overlay-inner">
                 <h1>You Lost...</h1>
-                <img src="../assets/mouseCat.png" alt="You Lost..."/><br>
+                <img src="../assets/mouseDead.png" alt="You Lost..."/><br>
                 <button @click="resetGrid()" class="resetBtn" type="button">
                    <font-awesome-icon icon="undo" /> Reset
                 </button>
@@ -222,10 +222,10 @@
                 const neighbors = [];
                 for(let r=-1; r < 2; r++) {
                     const row = y + r;
-                    if(this.yxGrid[row]){
+                    if(this.yxGrid[row] || this.yxGrid[row] === 0){
                         for (let c = -1; c < 2; c++) {
                             const column = x + c;
-                            if(this.yxGrid[row][column]){
+                            if(this.yxGrid[row][column] || this.yxGrid[row][column] === 0){
                                 neighbors.push(this.yxGrid[row][column]);
                             }
                         }

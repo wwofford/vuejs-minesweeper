@@ -90,7 +90,7 @@
                 difficultySettings : [
                     {
                         title: "easy",
-                        percent: .15
+                        percent: .125
                     },
                     {
                         title: "average",
