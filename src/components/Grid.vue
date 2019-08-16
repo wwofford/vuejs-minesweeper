@@ -160,7 +160,7 @@
                 //cellsGrid[id] returns {x: Number, y: Number}
                 let cellGrid = this.cellsGrid;
 
-                for(let id=0; id <= this.numOfCells - 1; id++) {
+                for(let id=0; id < this.numOfCells; id++) {
                     grid[id]=[];
 
                     //Gets xy location based of cell id
