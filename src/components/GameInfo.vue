@@ -11,7 +11,7 @@
         </span>
         <span @click="toggleSettings" class="icon-setting" style="position:relative;">
             <font-awesome-icon icon="cog" title="Change grid size or difficulty" />
-            <div v-if="openDropdown" class='menu'>
+            <div v-if="openDropdown" @mouseleave="openDropdown = false" class='menu'>
                 <div v-for="{ title, rows, columns} in sizeSettings" @click="askForNewGrid(rows, columns)"
                      :key="'sizeSetting' + title" class="menu-item"
                      title="Change grid size"
@@ -176,6 +176,9 @@
         float: left;
         cursor: pointer;
     }
+    .icon-reset:hover {
+        color: black;
+    }
     .icon-clock {
         padding-left: 10px;
         color: darkgoldenrod;
@@ -183,6 +186,9 @@
     .icon-setting {
         float: right;
         cursor: pointer;
+    }
+    .icon-setting:hover {
+        color: black;
     }
     .menu {
         background-color: #fff;

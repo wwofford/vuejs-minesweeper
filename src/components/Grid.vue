@@ -89,7 +89,7 @@
                 displayPicture: false,
                 //Cheat for where the mines are located
                 mineLocations: null,
-                //Array of cell properties, index is equal to cell id
+                //Multidimensional Array of cell properties, index is equal to cell id
                 cells: [],
                 //Remaining flags keeps track of the number of flags the user has left to set
                 remainingFlags: 0,
@@ -206,42 +206,35 @@
                     this.cells[id].hasMine = true;
 
                     //add +1 to neighboring mine count for all neighbors
-                    for(let neighbor of this.getNeighbors(id)) {
-                        this.cells[neighbor].neighboringMines += 1;
-                    }
+                    this.broadcastToNeighbors(id, false);
                 }
             },
 
-            //Get the neighbors of a cell when mines are being planted or a cell with zero neighboring mines has been opened
-            getNeighbors(id) {
+            //Broadcast to the neighbors of a cell when mines are being planted or a cell with zero neighboring mines has been opened
+            broadcastToNeighbors(id, isOpenCommand) {
                 //Gets xy location based of cell id
                 const x = id % this.columns;
                 const y = Math.floor(id / this.columns);
 
                 //Find neighboring cellIds of this id
-                const neighbors = [];
                 for(let r=-1; r < 2; r++) {
                     const row = y + r;
-                    if(this.yxGrid[row] || this.yxGrid[row] === 0){
+                    //falsey check
+                    if(this.yxGrid[row]) {
                         for (let c = -1; c < 2; c++) {
                             const column = x + c;
-                            if(this.yxGrid[row][column] || this.yxGrid[row][column] === 0){
-                                neighbors.push(this.yxGrid[row][column]);
+                            //falsey check but allows for yxGrid result to be zero
+                            //Also sees if this r and c is not the current position of id
+                            if((this.yxGrid[row][column] || this.yxGrid[row][column] === 0) && (r || c)) {
+                                if(isOpenCommand) {
+                                    //Open this neighboring cell of id
+                                    this.openCell(this.yxGrid[row][column]);
+                                } else {
+                                    //add +1 to neighboring mine count to this neighboring cell
+                                    this.cells[this.yxGrid[row][column]].neighboringMines += 1;
+                                }
                             }
                         }
-                    }
-                }
-                //Filter to not include this id
-                return neighbors.filter((cellId) => cellId !== id);
-            },
-
-            //Open neighboring cells once a cell with zero mines around it has been opened
-            openNeighboringCells(id) {
-                //Open neighboring cells if they are not already opened
-                //neighbor refers to the cell id of the neighbor
-                for(let neighbor of this.getNeighbors(id)) {
-                    if(!this.cells[neighbor].isOpen) {
-                        this.openCell(neighbor);
                     }
                 }
             },
@@ -265,9 +258,10 @@
                         this.displayPicture = true;
                     }
 
-                    //Check if cell has neighboring mines. If not, call method to open neighboring cells
+                    //Check if cell has neighboring mines
                     if(clickedCell.neighboringMines === 0) {
-                        this.openNeighboringCells(id);
+                        //Open neighboring cells once if this cell has zero mines around it
+                        this.broadcastToNeighbors(id, true);
                     }
                 }
             },
@@ -281,7 +275,7 @@
                 //Based on toggle, update remaining flag count
                 if(clickedCell.hasFlag) {
                     this.remainingFlags--;
-                } else{
+                } else {
                     this.remainingFlags++;
                 }
             }
@@ -328,7 +322,7 @@
         left: 50%;
     }
     img {
-        width: 800px;
+        width: 700px;
     }
     h1 {
         color: white;
